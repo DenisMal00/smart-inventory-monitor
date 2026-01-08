@@ -30,5 +30,4 @@ def run_training(epochs=1, imgsz=320):
     model.export(format="onnx")
 
 if __name__ == "__main__":
-    # Standard settings for overnight training
     run_training(epochs=50, imgsz=320)
