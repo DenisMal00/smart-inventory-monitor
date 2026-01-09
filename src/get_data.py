@@ -11,7 +11,7 @@ if not api_key:
     exit()
 
 rf = Roboflow(api_key=api_key)
-project = rf.workspace("smartinventorymonitor").project("package-v2-5knuq-cje8a")
+project = rf.workspace("smartinventorymonitor").project("package-v2-aifao")
 
 # Data download
 print("Downloading...")

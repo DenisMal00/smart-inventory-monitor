@@ -3,14 +3,13 @@ import torch
 from ultralytics import YOLO
 
 # ==========================================
-# CONFIGURATION (Approach A: Global Variables)
+# CONFIGURATION
 # ==========================================
-EPOCHS = 50
-IMGSZ = 640
+ADDITIONAL_EPOCHS = 50
+IMGSZ = 320
 BATCH_SIZE = 16
-BASE_MODEL = "yolov8s.pt"
-PROJECT_NAME = "models"
-RUN_NAME = "inventory_monitor_v2"
+PROJECT_FOLDER_NAME = "models"
+RUN_NAME = "inventory_monitor"
 
 
 # ==========================================
@@ -26,53 +25,42 @@ def run_training():
 
     print(f"[INFO] Training starting on device: {device.upper()}")
 
-    # Path management
+    # =========================================================
+    # PATH MANAGEMENT
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    checkpoint_path = os.path.join(BASE_DIR, PROJECT_NAME, RUN_NAME, "weights", "last.pt")
+    MODELS_ABSOLUTE_PATH = os.path.join(BASE_DIR, PROJECT_FOLDER_NAME)
     yaml_path = os.path.join(BASE_DIR, "data", "data.yaml")
 
+    checkpoint_path = os.path.join(MODELS_ABSOLUTE_PATH, "inventory_monitor", "weights", "last.pt")
+    # =========================================================
 
-    # Smart Resume Logic
-    if os.path.exists(checkpoint_path):
-        print(f"[RESUME] Loading existing checkpoint: {checkpoint_path}")
-        model = YOLO(checkpoint_path)
-        resume_training = True
-    else:
-        print(f"[NEW] No checkpoint found. Initializing with: {BASE_MODEL}")
-        model = YOLO(BASE_MODEL)
-        resume_training = False
+    # Verify checkpoint exists
+    if not os.path.exists(checkpoint_path):
+        print(f"[ERROR] Checkpoint not found: {checkpoint_path}")
+        return
 
-    # 1. START TRAINING
-    print(f"[TRAIN] Starting training: {EPOCHS} epochs at {IMGSZ}px...")
+    print(f"[INFO] Loading weights from: {checkpoint_path}")
+    print(f"[INFO] Starting NEW training run with pretrained weights")
+    model = YOLO(checkpoint_path)
+
+    # START NEW TRAINING (not resume)
+    print(f"[TRAIN] Training for {ADDITIONAL_EPOCHS} additional epochs...")
+
     model.train(
         data=yaml_path,
-        epochs=EPOCHS,
+        epochs=ADDITIONAL_EPOCHS,
         imgsz=IMGSZ,
         batch=BATCH_SIZE,
         device=device,
-        project=PROJECT_NAME,
+        project=MODELS_ABSOLUTE_PATH,
         name=RUN_NAME,
+        close_mosaic=50,
         exist_ok=True,
         plots=True,
         save=True,
-        resume=resume_training
+        resume=True,
+        patience=15
     )
-
-    # 2. FINAL EVALUATION
-    print(f"\n[TEST] Running final evaluation on Test Set...")
-    test_results = model.val(
-        data=yaml_path,
-        split='test',
-        imgsz=IMGSZ,
-        batch=BATCH_SIZE,
-        device=device
-    )
-    print(f"[INFO] Test Results (mAP50-95): {test_results.box.map}")
-
-    # 3. EXPORT
-    print("[EXPORT] Exporting final model to ONNX...")
-    model.export(format="onnx")
-
 
 if __name__ == "__main__":
     try:

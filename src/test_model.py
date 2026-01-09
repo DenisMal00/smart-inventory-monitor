@@ -1,47 +1,75 @@
-import argparse
-import sys
-from pathlib import Path
+import os
+import torch
 from ultralytics import YOLO
-import cv2
 
-def run_test(image_source, weights='models/inventory_monitor/weights/best.pt', conf=0.25):
-    """
-    Run inference on a specific source using the trained model weights.
-    """
-    if not Path(weights).exists():
-        print(f"Error: Weights not found at {weights}")
-        sys.exit(1)
+# ==========================================
+# CONFIGURATION
+# ==========================================
+IMGSZ = 320
+BATCH_SIZE = 16
+PROJECT_FOLDER_NAME = "models"
+RUN_NAME = "inventory_monitor"
 
-    # Load model
-    model = YOLO(weights)
 
-    # Inference
-    results = model.predict(
-        source=image_source,
-        conf=conf,
-        save=True,
-        imgsz=320
+# ==========================================
+
+def run_final_test():
+    # 1. Hardware acceleration setup
+    if torch.backends.mps.is_available():
+        device = "mps"
+    elif torch.cuda.is_available():
+        device = 0
+    else:
+        device = "cpu"
+
+    print(f"[INFO] Testing starting on device: {device.upper()}")
+
+    # 2. PATH MANAGEMENT (Relativi alla posizione dello script)
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    MODELS_ABSOLUTE_PATH = os.path.join(BASE_DIR, PROJECT_FOLDER_NAME)
+    yaml_path = os.path.join(BASE_DIR, "data", "data.yaml")
+
+    best_model_path = os.path.join(MODELS_ABSOLUTE_PATH, RUN_NAME, "weights", "best.pt")
+
+    # 3. Verify model exists
+    if not os.path.exists(best_model_path):
+        print(f"[ERROR] Il modello 'best.pt' non è stato trovato in: {best_model_path}")
+        return
+
+    # 4. LOAD MODEL
+    print(f"[INFO] Loading BEST weights from: {best_model_path}")
+    model = YOLO(best_model_path)
+
+    # 5. FINAL EVALUATION ON TEST SET
+    print(f"\n[TEST] Running evaluation on the 'test' split...")
+    results = model.val(
+        data=yaml_path,
+        split='test',
+        imgsz=IMGSZ,
+        batch=BATCH_SIZE,
+        device=device,
+        project=MODELS_ABSOLUTE_PATH,
+        name=RUN_NAME,
+        exist_ok=True
     )
 
-    # Display loop
-    for r in results:
-        annotated_frame = r.plot()
-        
-        # Display window
-        window_name = f"Inference - {Path(image_source).name}"
-        cv2.imshow(window_name, annotated_frame)
-        
-        print(f"Results saved to: {r.save_dir}")
-        print("Press any key to close...")
-        
-        cv2.waitKey(0)
-        cv2.destroyAllWindows()
+    # 6. PRINT SUMMARY
+    print("\n" + "=" * 30)
+    print("📊 TEST RESULTS SUMMARY")
+    print(f"mAP50-95: {results.box.map:.4f}")
+    print(f"mAP50:    {results.box.map50:.4f}")
+    print(f"Precision: {results.box.mp:.4f}")
+    print(f"Recall:    {results.box.mr:.4f}")
+    print("=" * 30)
+
+    # 7. EXPORT TO ONNX
+    print("\n[EXPORT] Exporting best model to ONNX for production...")
+    model.export(format="onnx")
+    print(f"[SUCCESS] Test completato. Risultati salvati in: {MODELS_ABSOLUTE_PATH}/{RUN_NAME}")
+
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="YOLOv8 Inventory Monitor - Test Script")
-    parser.add_argument("--source", type=str, required=True, help="Path to image or folder")
-    parser.add_argument("--conf", type=float, default=0.25, help="Confidence threshold (0.0 to 1.0)")
-    
-    args = parser.parse_args()
-    
-    run_test(args.source, conf=args.conf)
+    try:
+        run_final_test()
+    except Exception as error:
+        print(f"[ERROR] Errore durante il test: {error}")
