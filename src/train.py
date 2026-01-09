@@ -4,7 +4,7 @@ import os
 
 def run_training(epochs=1, imgsz=320):
     # Setup hardware
-    device = "mps" if torch.backends.mps.is_available() else "cpu"
+    device = "cpu" if torch.backends.mps.is_available() else "cpu"
     print(f"Using device: {device}")
 
     # Load model
