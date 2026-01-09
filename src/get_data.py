@@ -11,11 +11,11 @@ if not api_key:
     exit()
 
 rf = Roboflow(api_key=api_key)
-project = rf.workspace("abc-d9ezq").project("package-v2")
+project = rf.workspace("smartinventorymonitor").project("package-v2-5knuq-cje8a")
 
 # Data download
 print("Downloading...")
-dataset = project.version(4).download("yolov8")
+dataset = project.version(1).download("yolov8")
 
 # Folder organization
 if os.path.exists("data"):
