@@ -6,7 +6,7 @@ from ultralytics import YOLO
 # CONFIGURATION
 # ==========================================
 IMGSZ = 320
-BATCH_SIZE = 16
+BATCH_SIZE = 32
 PROJECT_FOLDER_NAME = "models"
 RUN_NAME = "inventory_monitor"
 
@@ -33,7 +33,7 @@ def run_final_test():
 
     # 3. Verify model exists
     if not os.path.exists(best_model_path):
-        print(f"[ERROR] Il modello 'best.pt' non è stato trovato in: {best_model_path}")
+        print(f"[ERROR] The model 'best.pt' is not found in: {best_model_path}")
         return
 
     # 4. LOAD MODEL
@@ -65,11 +65,8 @@ def run_final_test():
     # 7. EXPORT TO ONNX
     print("\n[EXPORT] Exporting best model to ONNX for production...")
     model.export(format="onnx")
-    print(f"[SUCCESS] Test completato. Risultati salvati in: {MODELS_ABSOLUTE_PATH}/{RUN_NAME}")
+    print(f"[SUCCESS] Test completed. Results saved in: {MODELS_ABSOLUTE_PATH}/{RUN_NAME}")
 
 
 if __name__ == "__main__":
-    try:
-        run_final_test()
-    except Exception as error:
-        print(f"[ERROR] Errore durante il test: {error}")
+    run_final_test()
