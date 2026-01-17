@@ -7,8 +7,8 @@ RUN apt-get update && apt-get install -y \
     libglib2.0-0 \
     && rm -rf /var/lib/apt/lists/*
 
-COPY requirements-torch.txt .
-RUN pip install --no-cache-dir -r requirements-torch.txt
+COPY requirements-torch-container.txt .
+RUN pip install --no-cache-dir -r requirements-torch-container.txt
 
 COPY src/app/main_torch.py ./main.py
 

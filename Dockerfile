@@ -9,9 +9,9 @@ RUN apt-get update && apt-get install -y \
     libxrender1 \
     && rm -rf /var/lib/apt/lists/*
 
-COPY requirements-prod.txt .
+COPY requirements-onnx-container.txt .
 
-RUN pip install --no-cache-dir -r requirements-prod.txt
+RUN pip install --no-cache-dir -r requirements-onnx-container.txt
 
 COPY src/app/ .
 
