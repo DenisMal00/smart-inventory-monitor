@@ -10,7 +10,7 @@ data/
 models/
 runs/
 wandb/
-
+scripts/test
 # IDE
 .vscode/
 .idea/

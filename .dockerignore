@@ -1,0 +1,21 @@
+#local environment
+venv/
+.env
+__pycache__/
+*.pyc
+
+#Data and DVC cache
+data/
+dataset/
+.dvc/
+!models/production/*.dvc
+
+#Git and IDE
+.git/
+.vscode/
+.idea/
+.DS_Store
+
+# Ignore build runs
+runs/
+scripts/
