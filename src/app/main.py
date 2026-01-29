@@ -8,7 +8,7 @@ from PIL import Image
 from pathlib import Path
 from contextlib import asynccontextmanager
 
-# Config
+# Configuration
 CONFIDENCE_THRESHOLD = 0.30
 NMS_THRESHOLD = 0.45
 INPUT_SIZE = 320
@@ -19,7 +19,7 @@ model_assets = {}
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     current_dir = Path(__file__).resolve().parent
-    # Check local dev path vs docker path
+    # Fallback logic for local dev vs Docker paths
     local_path = current_dir.parent.parent / "models" / "production" / "inventory_monitor_quantized.onnx"
     docker_path = current_dir / "models" / "production" / "inventory_monitor_quantized.onnx"
 
@@ -27,11 +27,22 @@ async def lifespan(app: FastAPI):
 
     if model_path.exists():
         try:
-            # Force CPU provider for Fargate stability
-            session = ort.InferenceSession(str(model_path), providers=['CPUExecutionProvider'])
+            # Optimize session for single-core Fargate environment
+            sess_options = ort.SessionOptions()
+            sess_options.intra_op_num_threads = 1
+            sess_options.inter_op_num_threads = 1
+            sess_options.execution_mode = ort.ExecutionMode.ORT_SEQUENTIAL
+            sess_options.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_ALL
+
+            session = ort.InferenceSession(
+                str(model_path),
+                sess_options=sess_options,
+                providers=['CPUExecutionProvider']
+            )
+
             model_assets["session"] = session
             model_assets["input_name"] = session.get_inputs()[0].name
-            print(f"Model loaded successfully: {model_path}")
+            print(f"Model loaded successfully (Optimized): {model_path}")
         except Exception as e:
             print(f"Error loading model: {e}")
     yield
@@ -49,6 +60,7 @@ def get_processed_detections(predictions, orig_size):
     boxes = []
     confidences = []
 
+    # Unpack predictions (cx, cy, w, h, confidence)
     for pred in predictions:
         conf = float(pred[4])
         if conf >= CONFIDENCE_THRESHOLD:
@@ -59,6 +71,7 @@ def get_processed_detections(predictions, orig_size):
             boxes.append([x, y, w, h])
             confidences.append(conf)
 
+    # NMS
     indices = cv2.dnn.NMSBoxes(boxes, confidences, CONFIDENCE_THRESHOLD, NMS_THRESHOLD)
 
     results = []
@@ -91,7 +104,7 @@ async def predict(file: UploadFile = File(...)):
 
         # 1. Pre-processing
         t_pre_start = time.time()
-        input_img = image.resize((INPUT_SIZE, INPUT_SIZE))
+        input_img = image.resize((INPUT_SIZE, INPUT_SIZE), resample=Image.BILINEAR)
         input_data = np.array(input_img).astype(np.float32) / 255.0
         input_data = input_data.transpose(2, 0, 1)
         input_data = np.expand_dims(input_data, axis=0)
@@ -102,18 +115,16 @@ async def predict(file: UploadFile = File(...)):
         outputs = model_assets["session"].run(None, {model_assets["input_name"]: input_data})
         t_inf = (time.time() - t_inf_start) * 1000
 
-        # 3. Post-processing (NMS)
+        # 3. Post-processing
         t_post_start = time.time()
         predictions = np.squeeze(outputs[0]).T
         detections = get_processed_detections(predictions, orig_size)
         t_post = (time.time() - t_post_start) * 1000
 
-        # Total processing time
         total_ms = (time.time() - t_start) * 1000
 
-        # Log internal traces to console for debugging (not returned to client)
-        print(
-            f"ONNX Trace | Pre: {t_pre:.2f}ms | Inf: {t_inf:.2f}ms | Post: {t_post:.2f}ms | Total: {total_ms:.2f}ms")
+        # Logging for CloudWatch analysis
+        print(f"ONNX Trace | Pre: {t_pre:.2f}ms | Inf: {t_inf:.2f}ms | Post: {t_post:.2f}ms | Total: {total_ms:.2f}ms")
 
         return {
             "success": True,
@@ -121,5 +132,6 @@ async def predict(file: UploadFile = File(...)):
             "inference_time_ms": round(total_ms, 2),
             "detections": detections
         }
+
     except Exception as e:
         return {"success": False, "error": str(e)}

@@ -16,3 +16,10 @@ scripts/test
 .idea/
 /data
 /models
+
+# Terraform specific
+terraform/.terraform/
+terraform/*.tfstate
+terraform/*.tfstate.backup
+terraform/*.tfvars
+terraform/.terraform.lock.hcl

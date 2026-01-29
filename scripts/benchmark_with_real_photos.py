@@ -3,9 +3,9 @@ import time
 import requests
 import statistics
 
-API_URL = "http://localhost:8000/predict"
+API_URL = "http://63.178.14.81:8000/predict"
 IMAGE_FOLDER = "test"
-CYCLES = 10
+CYCLES = 3
 WARMUP_RUNS = 10
 
 
@@ -93,6 +93,7 @@ if __name__ == "__main__":
 
 
 '''
+LOCAL
 Onnx base:
 ============================================================
 BENCHMARK RESULTS
@@ -140,6 +141,77 @@ Errors:        0
  Min Latency: 190.13 ms
  Max Latency: 890.21 ms
  P95 Latency: 705.33 ms
+============================================================
+
+
+
+
+
+
+ONNX int8 AWS 1 TASK 1VCPU 2GB RAM
+============================================================
+BENCHMARK RESULTS
+============================================================
+Valid Samples: 278 (excluding warmup)
+Errors:        0
+------------------------------
+ Avg Latency (RTT):    1419.51 ms
+ Avg Server Inference: 386.84 ms
+ Avg Network Overhead: 1032.67 ms
+------------------------------
+ Min Latency: 146.95 ms
+ Max Latency: 7809.09 ms
+ P95 Latency: 2565.53 ms
+============================================================
+
+
+pytorch AWS 1 TASK 1VCPU 2GB RAM
+============================================================
+BENCHMARK RESULTS
+============================================================
+Valid Samples: 278 (excluding warmup)
+Errors:        0
+------------------------------
+ Avg Latency (RTT):    1497.73 ms
+ Avg Server Inference: 447.63 ms
+ Avg Network Overhead: 1050.10 ms
+------------------------------
+ Min Latency: 141.74 ms
+ Max Latency: 4908.97 ms
+ P95 Latency: 2633.26 ms
+============================================================
+
+onnx int8 0.25 vcpu
+============================================================
+BENCHMARK RESULTS
+============================================================
+Valid Samples: 278 (excluding warmup)
+Errors:        0
+------------------------------
+ Avg Latency (RTT):    2534.96 ms
+ Avg Server Inference: 1633.36 ms
+ Avg Network Overhead: 901.60 ms
+------------------------------
+ Min Latency: 202.02 ms
+ Max Latency: 5837.41 ms
+ P95 Latency: 4653.83 ms
+============================================================
+
+
+onnx int8 0.5 vcpu
+============================================================
+BENCHMARK RESULTS
+============================================================
+Valid Samples: 278 (excluding warmup)
+Errors:        0
+------------------------------
+ Avg Latency (RTT):    1603.02 ms
+ Avg Server Inference: 788.04 ms
+ Avg Network Overhead: 814.99 ms
+------------------------------
+ Min Latency: 163.67 ms
+ Max Latency: 4810.80 ms
+ P95 Latency: 2666.91 ms
 ============================================================
 
 '''

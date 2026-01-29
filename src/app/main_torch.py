@@ -84,7 +84,6 @@ async def predict(file: UploadFile = File(...)):
             "success": True,
             "package_count": len(detections),
             "inference_time_ms": round(total_ms, 2),
-            "telemetry": {"model_internal": round(t_inf, 2), "formatting": round(t_format, 2)},
             "detections": detections
         }
     except Exception as e:
