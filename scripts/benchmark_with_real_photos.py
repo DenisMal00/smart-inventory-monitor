@@ -3,7 +3,7 @@ import time
 import requests
 import statistics
 
-API_URL = "http://63.178.14.81:8000/predict"
+API_URL = "http://3.66.29.114:8000/predict"
 IMAGE_FOLDER = "test"
 CYCLES = 3
 WARMUP_RUNS = 10

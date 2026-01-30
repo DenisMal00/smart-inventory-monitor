@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Inventory Monitor</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-white font-sans p-6 md:p-12">
+    <div class="max-w-7xl mx-auto">
+        <header class="mb-10 flex justify-between items-start">
+            <div>
+                <h1 class="text-3xl font-black tracking-tight text-slate-200 uppercase">Smart Inventory <span class="text-blue-500">Monitor</span></h1>
+                <p class="text-slate-500 text-sm mt-1">Real-time AI-driven stock analysis</p>
+            </div>
+            <a href="/inspector" class="bg-slate-800 border border-slate-700 hover:border-violet-500 text-slate-400 hover:text-violet-400 px-4 py-2 rounded-xl text-xs font-bold tracking-widest transition-all">
+                AI VISION INSPECTOR →
+            </a>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div id="status-card" class="bg-slate-800 p-8 rounded-3xl border-l-8 border-slate-500 shadow-2xl transition-all duration-500">
+                <h3 class="text-slate-500 uppercase text-xs font-bold tracking-widest mb-2">System Status</h3>
+                <div class="mt-12 flex flex-col">
+                    <div id="status-text" class="text-5xl font-black text-slate-400 mb-2 uppercase">Waiting</div>
+                    <p id="status-msg" class="text-slate-400 text-sm italic">Waiting for first detection...</p>
+                    <div class="mt-6 pt-6 border-t border-slate-700/50 text-xs text-slate-500">
+                        Last detection: <span id="last-check" class="font-mono">Never</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-slate-800 p-8 rounded-3xl border-l-8 border-blue-500 shadow-2xl flex flex-col items-center text-center">
+                <h3 class="text-slate-500 uppercase text-xs font-bold tracking-widest mb-2 w-full text-left">Current Inventory</h3>
+                <div class="mt-12 flex flex-col items-center">
+                    <div id="count-display" class="text-9xl font-black text-white leading-none">--</div>
+                    <p class="text-slate-400 font-medium mt-4 uppercase tracking-widest text-xs">Packages Detected</p>
+                </div>
+            </div>
+
+            <div class="bg-slate-800 p-8 rounded-3xl border-l-8 border-violet-500 shadow-2xl">
+                <h3 class="text-slate-500 uppercase text-xs font-bold tracking-widest mb-6">Threshold Settings</h3>
+                <div class="space-y-5">
+                    <div>
+                        <label class="text-[10px] text-slate-500 uppercase font-bold">Critical Level</label>
+                        <input type="number" id="min-threshold" placeholder="Loading..." class="w-full bg-slate-700/50 p-3 rounded-xl mt-1 border border-slate-600 focus:border-violet-500 outline-none transition-colors">
+                    </div>
+                    <div>
+                        <label class="text-[10px] text-slate-500 uppercase font-bold">Target Capacity</label>
+                        <input type="number" id="max-threshold" placeholder="Loading..." class="w-full bg-slate-700/50 p-3 rounded-xl mt-1 border border-slate-600 focus:border-violet-500 outline-none transition-colors">
+                    </div>
+                    <button onclick="updateThresholds()" class="w-full bg-violet-600 hover:bg-violet-500 p-4 rounded-2xl font-black text-sm transition-all active:scale-95 shadow-lg shadow-violet-900/20">
+                        APPLY SETTINGS
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-8 bg-slate-800 rounded-3xl p-8 border border-slate-700 shadow-2xl overflow-hidden">
+            <h3 class="text-slate-500 uppercase text-xs font-bold tracking-widest mb-6">Recent Activity Log</h3>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="text-slate-500 text-xs uppercase border-b border-slate-700/50">
+                            <th class="pb-4 font-bold">Time</th>
+                            <th class="pb-4 font-bold">Count</th>
+                            <th class="pb-4 font-bold">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="log-body" class="text-slate-300 text-sm"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Helper for log table colors
+        function getStatusColorClass(status) {
+            if (status === 'FULL') return 'text-green-400';
+            if (status === 'WARNING') return 'text-orange-400';
+            if (status === 'CRITICAL') return 'text-red-500';
+            return 'text-slate-500';
+        }
+
+        // Initialize thresholds from server on page load
+        async function initializeThresholds() {
+            try {
+                const response = await fetch('/status');
+                const data = await response.json();
+                document.getElementById('min-threshold').value = data.critical_threshold;
+                document.getElementById('max-threshold').value = data.full_capacity;
+                console.log("Initial thresholds synced from server.");
+            } catch (err) {
+                console.error("Initialization error:", err);
+            }
+        }
+
+        async function refreshDashboard() {
+            try {
+                const response = await fetch('/status');
+                const data = await response.json();
+
+                document.getElementById('count-display').innerText = (data.status === 'WAITING') ? '--' : data.current_count;
+                document.getElementById('last-check').innerText = data.last_check;
+                document.getElementById('status-msg').innerText = data.message;
+
+                const card = document.getElementById('status-card');
+                const text = document.getElementById('status-text');
+
+                card.classList.remove('border-green-500', 'border-orange-500', 'border-red-600', 'border-slate-500');
+                text.classList.remove('text-green-400', 'text-orange-400', 'text-red-500', 'text-slate-400');
+
+                if (data.status === 'WAITING') {
+                    card.classList.add('border-slate-500');
+                    text.classList.add('text-slate-400');
+                    text.innerText = 'WAITING';
+                }
+                else if (data.status === 'FULL') {
+                    card.classList.add('border-green-500');
+                    text.classList.add('text-green-400');
+                    text.innerText = 'FULL';
+                }
+                else if (data.status === 'WARNING') {
+                    card.classList.add('border-orange-500');
+                    text.classList.add('text-orange-400');
+                    text.innerText = 'LOW';
+                }
+                else {
+                    card.classList.add('border-red-600');
+                    text.classList.add('text-red-500');
+                    text.innerText = 'CRITICAL';
+                }
+
+                const logBody = document.getElementById('log-body');
+                logBody.innerHTML = '';
+
+                if (data.history && data.history.length > 0) {
+                    data.history.forEach(entry => {
+                        logBody.innerHTML += `
+                            <tr class="border-b border-slate-700/30">
+                                <td class="py-3 font-mono text-xs text-slate-400">${entry.timestamp}</td>
+                                <td class="py-3 font-bold">${entry.count}</td>
+                                <td class="py-3 font-bold text-xs uppercase ${getStatusColorClass(entry.status)}">${entry.status}</td>
+                            </tr>`;
+                    });
+                } else {
+                    logBody.innerHTML = '<tr><td colspan="3" class="py-4 text-slate-600 italic text-center">No activity recorded yet...</td></tr>';
+                }
+            } catch (err) {
+                console.error("Dashboard sync error:", err);
+            }
+        }
+
+        async function updateThresholds() {
+            const minVal = parseInt(document.getElementById('min-threshold').value);
+            const maxVal = parseInt(document.getElementById('max-threshold').value);
+
+            if (maxVal < minVal) {
+                alert("Logic Error: Target Capacity must be greater than or equal to Critical Level.");
+                return;
+            }
+
+            try {
+                const response = await fetch('/update-settings', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ min: minVal, max: maxVal })
+                });
+
+                if (response.ok) {
+                    await refreshDashboard();
+                    alert("Settings synchronized with AI engine.");
+                } else {
+                    alert("Error: Could not update thresholds.");
+                }
+            } catch (error) {
+                console.error("Sync failed:", error);
+            }
+        }
+
+        // Execution logic
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeThresholds();
+            setInterval(refreshDashboard, 500); // 2 FPS to minimize overhead
+            refreshDashboard();
+        });
+    </script>
+</body>
+</html>

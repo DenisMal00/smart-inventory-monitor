@@ -2,16 +2,14 @@ import os
 import torch
 from ultralytics import YOLO
 
-# ==========================================
 # CONFIGURATION
-# ==========================================
+
 IMGSZ = 320
 BATCH_SIZE = 32
 PROJECT_FOLDER_NAME = "models"
 RUN_NAME = "inventory_monitor"
 
 
-# ==========================================
 
 def run_final_test():
     # 1. Hardware acceleration setup
@@ -55,7 +53,7 @@ def run_final_test():
 
     # 6. PRINT SUMMARY
     print("\n" + "=" * 30)
-    print("📊 TEST RESULTS SUMMARY")
+    print("TEST RESULTS SUMMARY")
     print(f"mAP50-95: {results.box.map:.4f}")
     print(f"mAP50:    {results.box.map50:.4f}")
     print(f"Precision: {results.box.mp:.4f}")
