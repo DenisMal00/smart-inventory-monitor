@@ -204,3 +204,4 @@ async def update_settings(settings: ThresholdSettings):
         return {"success": True, "updated": settings}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
