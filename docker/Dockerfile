@@ -9,13 +9,13 @@ RUN apt-get update && apt-get install -y \
     libxrender1 \
     && rm -rf /var/lib/apt/lists/*
 
-COPY requirements-onnx-container.txt .
+COPY ../requirements/requirements-onnx-container.txt .
 
 RUN pip install --no-cache-dir -r requirements-onnx-container.txt
 
-COPY src/app/ .
+COPY ../src/app .
 
-COPY models/production/ ./models/production/
+COPY ../models/production ./models/production/
 
 
 ENV PYTHONUNBUFFERED=1
