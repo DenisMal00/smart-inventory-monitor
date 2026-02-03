@@ -23,7 +23,6 @@ The interface is structured into focused modules to provide immediate operationa
 
 ## 📺 System in Action
 
-![Dashboard Demo](assets/dashboard-in-action.gif)
 ![Dashboard Demo](assets/dashboard-in-action1.gif)
 
 
@@ -59,4 +58,5 @@ To avoid the fixed costs associated with an AWS Application Load Balancer, I imp
 * **Backend**: FastAPI (Python 3.11)
 * **Infrastructure**: AWS ECS (Fargate), AWS ECR
 * **Frontend**: Tailwind CSS, Vanilla JavaScript
+
 
