@@ -11,6 +11,7 @@ models/
 runs/
 wandb/
 scripts/test
+scripts/test1
 # IDE
 .vscode/
 .idea/
