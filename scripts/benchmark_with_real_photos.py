@@ -8,7 +8,6 @@ IMAGE_FOLDER = "test"
 CYCLES = 3
 WARMUP_RUNS = 10
 
-
 def run_benchmark():
     # 1. Setup image list
     if not os.path.exists(IMAGE_FOLDER):
