@@ -23,8 +23,8 @@ The interface is structured into focused modules to provide immediate operationa
 
 ## 📺 System in Action
 
-![Dashboard Demo](dashboard-in-action.gif)
-![Dashboard Demo](dashboard-in-action1.gif)
+![Dashboard Demo](assets/dashboard-in-action.gif)
+![Dashboard Demo](assets/dashboard-in-action1.gif)
 
 
 > **Sensor Simulation:** For this demonstration, a **Python-based sensor simulator** mimics an industrial IP camera by pushing images to the **AWS Fargate Task** at a constant 1 FPS rate. This showcases how the backend handles real-time inference and updates the global state without human intervention.
@@ -59,3 +59,4 @@ To avoid the fixed costs associated with an AWS Application Load Balancer, I imp
 * **Backend**: FastAPI (Python 3.11)
 * **Infrastructure**: AWS ECS (Fargate), AWS ECR
 * **Frontend**: Tailwind CSS, Vanilla JavaScript
+
