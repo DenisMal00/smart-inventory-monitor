@@ -69,7 +69,7 @@ To avoid the fixed costs associated with an AWS Application Load Balancer, I imp
 
 ## Tech Stack
 
-* **AI & Machine Learning**: Ultralytics YOLOv8n, ONNX Runtime (INT8 Quantization)
+* **AI & Machine Learning**: PyTorch, Ultralytics YOLOv8n, ONNX Runtime (INT8 Quantization)
 * **Backend**: FastAPI (Python 3.11), Boto3 (AWS SDK)
 * **Infrastructure as Code**: Terraform
 * **Cloud Services (AWS)**: ECS Fargate (Serverless), ECR (Container Registry), IAM
@@ -86,6 +86,7 @@ While the current iteration focuses on a lean, cost-effective MVP, the following
 * **Data Persistence**: Integrating **AWS DynamoDB** (NoSQL) to replace the in-memory activity log. This would enable long-term historical analysis, identifying stock trends and consumption patterns over months or years.
 * **User Authentication**: Implementing **AWS Cognito** or OAuth2 to secure dashboard access and manage granular user roles (e.g., Admin vs. Viewer).
 * **CI/CD Automation**: Setting up **GitHub Actions** workflows to automatically run tests, build the Docker image, and apply Terraform changes upon pushing to the main branch.
+
 
 
 
