@@ -4,7 +4,7 @@
 > **Live Demo:** [inventory-monitor-denis.duckdns.org](http://inventory-monitor-denis.duckdns.org:8000/)  
 > *(Note: This is an on-demand environment. If the link is unreachable, it is likely offline to optimize AWS infrastructure costs.)*
 
-**Smart Inventory Monitor** is a computer vision solution designed to automate stock counting in logistics environments. By leveraging a quantized **YOLOv8 nano** model, the system tracks package counts in real-time, providing a reliable and automated alternative to manual inventory checks.
+**Smart Inventory Monitor** is a **Cloud-Native** computer vision solution designed to automate stock counting in logistics environments. By leveraging a quantized **YOLOv8 nano** model, the system tracks package counts in real-time, providing a reliable and automated alternative to manual inventory checks.
 
 The system is specifically optimized for **monitoring stationary depots**. This focus on inventory state allows the architecture to remain lightweight and cost-effective, supporting a stable throughput of up to **2 FPS (Frames Per Second)**, a practical frequency that ensures accurate tracking for static stock while keeping cloud infrastructure overhead to a minimum.
 
@@ -86,6 +86,7 @@ While the current iteration focuses on a lean, cost-effective MVP, the following
 * **Data Persistence**: Integrating **AWS DynamoDB** (NoSQL) to replace the in-memory activity log. This would enable long-term historical analysis, identifying stock trends and consumption patterns over months or years.
 * **User Authentication**: Implementing **AWS Cognito** or OAuth2 to secure dashboard access and manage granular user roles (e.g., Admin vs. Viewer).
 * **CI/CD Automation**: Setting up **GitHub Actions** workflows to automatically run tests, build the Docker image, and apply Terraform changes upon pushing to the main branch.
+
 
 
 
