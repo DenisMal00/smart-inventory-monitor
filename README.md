@@ -1,6 +1,9 @@
 # 📦 Smart Inventory Monitor
 ### Real-time AI-driven stock analysis
 
+> **Live Demo:** [inventory-monitor-denis.duckdns.org](http://inventory-monitor-denis.duckdns.org:8000/)  
+> *(Note: This is an on-demand environment. If the link is unreachable, it is likely offline to optimize AWS infrastructure costs.)*
+
 **Smart Inventory Monitor** is a computer vision solution designed to automate stock counting in logistics environments. By leveraging a quantized **YOLOv8 nano** model, the system tracks package counts in real-time, providing a reliable and automated alternative to manual inventory checks.
 
 The system is specifically optimized for **monitoring stationary depots**. This focus on inventory state allows the architecture to remain lightweight and cost-effective, supporting a stable throughput of up to **2 FPS (Frames Per Second)**, a practical frequency that ensures accurate tracking for static stock while keeping cloud infrastructure overhead to a minimum.
@@ -72,5 +75,6 @@ To avoid the fixed costs associated with an AWS Application Load Balancer, I imp
 * **Cloud Services (AWS)**: ECS Fargate (Serverless), ECR (Container Registry), IAM
 * **Networking**: DuckDNS API (Dynamic DNS integration)
 * **Frontend**: Tailwind CSS, Vanilla JavaScript (Modern ES6+)
+
 
 
