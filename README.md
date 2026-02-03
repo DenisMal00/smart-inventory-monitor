@@ -58,13 +58,13 @@ To ensure high performance on cost-effective, limited hardware, the model was co
 * **-13.6% in Total Server Latency (End-to-End)**: Significant reduction in the full request-to-response cycle, ensuring a more responsive and stable monitoring heartbeat.
 * **-71.7% in RAM Consumption**: Massive reduction in memory footprint, allowing the system to run comfortably on low-tier serverless instances with consistent performance.
 * **-51.8% in Container Image Size**: Half the size of the original image, resulting in faster cold starts and lower storage overhead on AWS ECR.
-* **2 FPS Throughput Support**: Optimized to handle a continuous stream of up to 2 frames per second end-to-end, providing a balance between real-time monitoring and cloud cost efficiency on minimal 0.5 vCPU hardware.
   
 ### Networking: Dynamic DNS via DuckDNS
 To avoid the fixed costs associated with an AWS Application Load Balancer, I implemented a custom **DuckDNS integration**.
 * A startup hook in the FastAPI `lifespan` automatically updates the DNS record with the Fargate Task's public IP.
 * **Result**: A reliable, reachable URL at zero infrastructure cost.
-
+* **Production Scalability**: While this setup is optimized for cost-efficiency in a demo environment, a **production-grade deployment** would transition to an **AWS ALB** (Application Load Balancer). This would natively handle HTTPS/SSL termination and provide a **stable DNS entry point** (via Route 53), completely eliminating the need for dynamic IP updates and external workaround scripts.
+  
 ---
 
 ## Tech Stack
@@ -75,6 +75,18 @@ To avoid the fixed costs associated with an AWS Application Load Balancer, I imp
 * **Cloud Services (AWS)**: ECS Fargate (Serverless), ECR (Container Registry), IAM
 * **Networking**: DuckDNS API (Dynamic DNS integration)
 * **Frontend**: Tailwind CSS, Vanilla JavaScript (Modern ES6+)
+
+---
+
+## Future Roadmap
+
+While the current iteration focuses on a lean, cost-effective MVP, the following enhancements are planned for a production-grade release:
+
+* **Smart Alerting System**: Implementing **AWS SNS** (Simple Notification Service) or **AWS SES** to actively notify warehouse managers via email or SMS immediately when stock levels fall below the critical threshold.
+* **Data Persistence**: Integrating **AWS DynamoDB** (NoSQL) to replace the in-memory activity log. This would enable long-term historical analysis, identifying stock trends and consumption patterns over months or years.
+* **User Authentication**: Implementing **AWS Cognito** or OAuth2 to secure dashboard access and manage granular user roles (e.g., Admin vs. Viewer).
+* **CI/CD Automation**: Setting up **GitHub Actions** workflows to automatically run tests, build the Docker image, and apply Terraform changes upon pushing to the main branch.
+
 
 
 
