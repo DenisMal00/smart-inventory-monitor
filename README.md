@@ -1,7 +1,9 @@
 # 📦 Smart Inventory Monitor
 ### Real-time AI-driven stock analysis
 
-**Smart Inventory Monitor** is a computer vision solution designed to automate stock counting in logistics environments. By leveraging a quantized **YOLOv8** model, the system tracks package counts in real-time, providing a reliable and automated alternative to manual inventory checks.
+**Smart Inventory Monitor** is a computer vision solution designed to automate stock counting in logistics environments. By leveraging a quantized **YOLOv8 nano** model, the system tracks package counts in real-time, providing a reliable and automated alternative to manual inventory checks.
+
+The system is specifically optimized for **monitoring stationary depots**. This focus on inventory state allows the architecture to remain lightweight and cost-effective, supporting a stable throughput of up to **2 FPS (Frames Per Second)**, a practical frequency that ensures accurate tracking for static stock while keeping cloud infrastructure overhead to a minimum.
 
 ---
 
@@ -27,7 +29,7 @@ The interface is structured into focused modules to provide immediate operationa
 ![Dashboard Demo](assets/dashboard-in-action1.gif)
 
 
-> **Sensor Simulation:** For this demonstration, a **Python-based sensor simulator** mimics an industrial IP camera by pushing images to the **AWS Fargate Task** at a constant 1 FPS rate. This showcases how the backend handles real-time inference and updates the global state without human intervention.
+> **Sensor Simulation:** For this demonstration, a **Python-based sensor simulator** mimics an industrial IP camera by pushing images to the **AWS Fargate Task**. This showcases how the backend handles real-time inference and updates the global state without human intervention.
 
 ---
 
@@ -42,11 +44,19 @@ This tool acts as a quality control panel, allowing operators to manually upload
 
 ## Engineering & Design Choices
 
-### Performance: ONNX on AWS Fargate
-The model was converted from PyTorch to **ONNX INT8** to ensure high performance on cost-effective, limited hardware.
-* **Efficiency**: Optimized for CPU-only inference on minimal **0.5 vCPU** instances.
-* **Stability**: Keeps the memory footprint under **1GB RAM**, ensuring stable execution in serverless environments.
+### Infrastructure as Code (IaC): Terraform
+The entire AWS environment is managed through **Terraform**, moving away from manual configuration toward a professional, reproducible setup.
+* **Automated Provisioning**: Manages the lifecycle of AWS ECS (Fargate), ECR repositories, and all required IAM roles and security groups.
+* **Operational Agility**: The entire infrastructure can be provisioned or destroyed in minutes with just a few commands, ensuring consistent environment replication and rapid testing cycles.
+  
+### Optimization & Efficiency
+To ensure high performance on cost-effective, limited hardware, the model was converted from PyTorch to **ONNX INT8**. This optimization led to a system specifically tuned for **low-resource environments** (0.5 vCPU / 1GB RAM) on **AWS Fargate**:
 
+* **-13.6% in Total Server Latency (End-to-End)**: Significant reduction in the full request-to-response cycle, ensuring a more responsive and stable monitoring heartbeat.
+* **-71.7% in RAM Consumption**: Massive reduction in memory footprint, allowing the system to run comfortably on low-tier serverless instances with consistent performance.
+* **-51.8% in Container Image Size**: Half the size of the original image, resulting in faster cold starts and lower storage overhead on AWS ECR.
+* **2 FPS Throughput Support**: Optimized to handle a continuous stream of up to 2 frames per second end-to-end, providing a balance between real-time monitoring and cloud cost efficiency on minimal 0.5 vCPU hardware.
+  
 ### Networking: Dynamic DNS via DuckDNS
 To avoid the fixed costs associated with an AWS Application Load Balancer, I implemented a custom **DuckDNS integration**.
 * A startup hook in the FastAPI `lifespan` automatically updates the DNS record with the Fargate Task's public IP.
@@ -55,11 +65,12 @@ To avoid the fixed costs associated with an AWS Application Load Balancer, I imp
 ---
 
 ## Tech Stack
-* **AI/ML**: Ultralytics YOLOv8, ONNX Runtime
-* **Backend**: FastAPI (Python 3.11)
-* **Infrastructure**: AWS ECS (Fargate), AWS ECR
-* **Frontend**: Tailwind CSS, Vanilla JavaScript
 
-
+* **AI & Machine Learning**: Ultralytics YOLOv8n, ONNX Runtime (INT8 Quantization)
+* **Backend**: FastAPI (Python 3.11), Boto3 (AWS SDK)
+* **Infrastructure as Code**: Terraform
+* **Cloud Services (AWS)**: ECS Fargate (Serverless), ECR (Container Registry), IAM
+* **Networking**: DuckDNS API (Dynamic DNS integration)
+* **Frontend**: Tailwind CSS, Vanilla JavaScript (Modern ES6+)
 
 
