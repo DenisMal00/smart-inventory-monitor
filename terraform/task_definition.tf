@@ -27,6 +27,10 @@ resource "aws_ecs_task_definition" "onnx" {
           hostPort      = 8000
         }
       ]
+      environment = [
+            { name = "DUCKDNS_TOKEN",  value = var.duckdns_token },
+            { name = "DUCKDNS_DOMAIN", value = var.duckdns_domain }
+      ]
       logConfiguration = {
         logDriver = "awslogs"
         options = {
