@@ -48,7 +48,7 @@ This tool acts as a quality control panel, allowing operators to manually upload
 ## Engineering & Design Choices
 
 ### Model Evaluation & Dataset Scale
-
+The project utilizes **YOLOv8n** (Nano), the most lightweight architecture in the YOLOv8 family. This choice was a strategic decision to enable high-speed inference on CPU-only environments. Given that inventory monitoring often involves static or slow-moving objects, the Nano model provides an ideal balance: it delivers the necessary precision for object counting while maintaining a memory footprint small enough for cost-effective serverless deployment.
 > **Dataset Note**: The model was trained and validated on a large-scale custom dataset of **~10,000 images**. This high volume of data ensures the system is robust against varying lighting conditions and warehouse clutter.
 
 | Metric | Value | Interpretation |
@@ -99,6 +99,7 @@ While the current iteration focuses on a lean, cost-effective MVP, the following
 * **Data Persistence**: Integrating **AWS DynamoDB** (NoSQL) to replace the in-memory activity log. This would enable long-term historical analysis, identifying stock trends and consumption patterns over months or years.
 * **User Authentication**: Implementing **AWS Cognito** or OAuth2 to secure dashboard access and manage granular user roles (e.g., Admin vs. Viewer).
 * **CI/CD Automation**: Setting up **GitHub Actions** workflows to automatically run tests, build the Docker image, and apply Terraform changes upon pushing to the main branch.
+
 
 
 
