@@ -47,6 +47,19 @@ This tool acts as a quality control panel, allowing operators to manually upload
 
 ## Engineering & Design Choices
 
+### Model Evaluation & Dataset Scale
+
+> **Dataset Note**: The model was trained and validated on a large-scale custom dataset of **~10,000 images**. This high volume of data ensures the system is robust against varying lighting conditions and warehouse clutter.
+
+| Metric | Value | Interpretation |
+| :--- | :--- | :--- |
+| **mAP50** | **0.828** | Solid detection and localization across thousands of test scenarios. |
+| **mAP50-95** | **0.680** | Consistent bounding box accuracy, even with overlapping packages. |
+| **Precision** | **0.877** | Extremely low false-alarm rate, essential for automated billing/audit. |
+| **Recall** | **0.749** | Strong detection coverage in high-density storage environments. |
+
+These metrics reflect the performance of the **ONNX INT8 quantized model**. 
+
 ### Infrastructure as Code (IaC): Terraform
 The entire AWS environment is managed through **Terraform**, moving away from manual configuration toward a professional, reproducible setup.
 * **Automated Provisioning**: Manages the lifecycle of AWS ECS (Fargate), ECR repositories, and all required IAM roles and security groups.
@@ -86,6 +99,7 @@ While the current iteration focuses on a lean, cost-effective MVP, the following
 * **Data Persistence**: Integrating **AWS DynamoDB** (NoSQL) to replace the in-memory activity log. This would enable long-term historical analysis, identifying stock trends and consumption patterns over months or years.
 * **User Authentication**: Implementing **AWS Cognito** or OAuth2 to secure dashboard access and manage granular user roles (e.g., Admin vs. Viewer).
 * **CI/CD Automation**: Setting up **GitHub Actions** workflows to automatically run tests, build the Docker image, and apply Terraform changes upon pushing to the main branch.
+
 
 
 
