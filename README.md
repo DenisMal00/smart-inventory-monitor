@@ -7,7 +7,7 @@
 
 **Smart Inventory Monitor** is a **Cloud-Native** computer vision solution designed to automate stock counting in logistics environments. By leveraging a quantized **YOLOv8 nano** model, the system tracks package counts in real-time, providing a reliable and automated alternative to manual inventory checks.
 
-The system is specifically optimized for **monitoring stationary depots**. This focus on inventory state allows the architecture to remain lightweight and cost-effective, supporting a stable throughput of up to **2 FPS (Frames Per Second)**, a practical frequency that ensures accurate tracking for static stock while keeping cloud infrastructure overhead to a minimum.
+The system is specifically optimized for **monitoring stationary depots**. This focus on inventory state allows the architecture to remain lightweight and cost-effective, supporting a stable throughput of **2 FPS (Frames Per Second)**, a practical frequency that ensures accurate tracking for static stock while keeping cloud infrastructure overhead to a minimum.
 
 ---
 
@@ -133,5 +133,6 @@ python simulate.py
 
 4. Monitor the Results
 Open the **[Live Dashboard](http://inventory-monitor-denis.duckdns.org:8000/)** in your browser. As the script sends each frame, you will see the dashboard that changes
+
 
 
