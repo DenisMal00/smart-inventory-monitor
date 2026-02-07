@@ -2,8 +2,9 @@
 ### Real-time AI-driven stock analysis
 
 > **Live Demo:** [inventory-monitor-denis.duckdns.org](http://inventory-monitor-denis.duckdns.org:8000/)  
-> *(Note: This is an on-demand environment. If the link is unreachable, it is likely offline to optimize AWS infrastructure costs.)*
-> Want to see the system react in real-time? You can simulate an industrial camera from your terminal by running our [Live Simulator](#try-it-yourself-live-simulator).
+> *(Note: This is an on-demand environment. If the link is unreachable, it is likely offline to optimize AWS infrastructure costs).*
+>
+> *Want to see the system react in real-time? You can simulate an industrial camera from your terminal by running our [Live Simulator](#try-it-yourself-live-simulator).*
 
 **Smart Inventory Monitor** is a **Cloud-Native** computer vision solution designed to automate stock counting in logistics environments. By leveraging a quantized **YOLOv8 nano** model, the system tracks package counts in real-time, providing a reliable and automated alternative to manual inventory checks.
 
@@ -133,6 +134,7 @@ python simulate.py
 
 4. Monitor the Results
 Open the **[Live Dashboard](http://inventory-monitor-denis.duckdns.org:8000/)** in your browser. As the script sends each frame, you will see the dashboard that changes
+
 
 
 
