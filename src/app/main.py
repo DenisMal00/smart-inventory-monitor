@@ -23,8 +23,8 @@ NMS_THRESHOLD = 0.45
 
 inventory_state = {
     "current_count": 0,
-    "critical_threshold": 5,
-    "full_capacity": 20,
+    "critical_threshold": 2,
+    "full_capacity": 6,
     "last_check": "Never",
     "status": "WAITING",
     "message": "Waiting for first detection...",
