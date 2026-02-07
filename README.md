@@ -3,6 +3,7 @@
 
 > **Live Demo:** [inventory-monitor-denis.duckdns.org](http://inventory-monitor-denis.duckdns.org:8000/)  
 > *(Note: This is an on-demand environment. If the link is unreachable, it is likely offline to optimize AWS infrastructure costs.)*
+> Want to see the system react in real-time? You can simulate an industrial camera from your terminal by running our [Live Simulator](#try-it-yourself-live-simulator).
 
 **Smart Inventory Monitor** is a **Cloud-Native** computer vision solution designed to automate stock counting in logistics environments. By leveraging a quantized **YOLOv8 nano** model, the system tracks package counts in real-time, providing a reliable and automated alternative to manual inventory checks.
 
@@ -100,11 +101,37 @@ While the current iteration focuses on a lean, cost-effective MVP, the following
 * **User Authentication**: Implementing **AWS Cognito** or OAuth2 to secure dashboard access and manage granular user roles (e.g., Admin vs. Viewer).
 * **CI/CD Automation**: Setting up **GitHub Actions** workflows to automatically run tests, build the Docker image, and apply Terraform changes upon pushing to the main branch.
 
+---
 
+<a name="try-it-yourself-live-simulator"></a>
+## Try it yourself: Live Simulator 
 
+To demonstrate the system's ability to handle remote data ingestion, I developed a **Python client** that simulates an industrial IP camera. It performs local image optimization and pushes frames to the AWS endpoint.
 
+### How to run the test:
+1. **Navigate to the simulation folder**:
+bash
+```
+cd simulation
+```
 
+2. Install dependencies
+It is recommended to use a virtual environment. Install the required libraries using the provided requirements file:
 
+bash
+```
+pip install -r requirements.txt
+```
 
+3. Run the simulator
+Execute the script to start sending frames from the `sample_images` folder to the AWS endpoint:
+
+bash
+```
+python simulate.py
+```
+
+4. Monitor the Results
+Open the **[Live Dashboard](http://inventory-monitor-denis.duckdns.org:8000/)** in your browser. As the script sends each frame, you will see the dashboard that changes
 
 
