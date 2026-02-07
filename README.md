@@ -4,7 +4,7 @@
 > **Live Demo:** [inventory-monitor-denis.duckdns.org](http://inventory-monitor-denis.duckdns.org:8000/)  
 > *(Note: This is an on-demand environment. If the link is unreachable, it is likely offline to optimize AWS infrastructure costs.)*
 
-**Smart Inventory Monitor** is a computer vision solution designed to automate stock counting in logistics environments. By leveraging a quantized **YOLOv8 nano** model, the system tracks package counts in real-time, providing a reliable and automated alternative to manual inventory checks.
+**Smart Inventory Monitor** is a **Cloud-Native** computer vision solution designed to automate stock counting in logistics environments. By leveraging a quantized **YOLOv8 nano** model, the system tracks package counts in real-time, providing a reliable and automated alternative to manual inventory checks.
 
 The system is specifically optimized for **monitoring stationary depots**. This focus on inventory state allows the architecture to remain lightweight and cost-effective, supporting a stable throughput of up to **2 FPS (Frames Per Second)**, a practical frequency that ensures accurate tracking for static stock while keeping cloud infrastructure overhead to a minimum.
 
@@ -47,6 +47,19 @@ This tool acts as a quality control panel, allowing operators to manually upload
 
 ## Engineering & Design Choices
 
+### Model Evaluation & Dataset Scale
+The project utilizes **YOLOv8n** (Nano), the most lightweight architecture in the YOLOv8 family. This choice was a strategic decision to enable high-speed inference on CPU-only environments. Given that inventory monitoring often involves static or slow-moving objects, the Nano model provides an ideal balance: it delivers the necessary precision for object counting while maintaining a memory footprint small enough for cost-effective serverless deployment.
+> **Dataset Note**: The model was trained and validated on a large-scale custom dataset of **~10,000 images**. This high volume of data ensures the system is robust against varying lighting conditions and warehouse clutter.
+
+| Metric | Value | Interpretation |
+| :--- | :--- | :--- |
+| **mAP50** | **0.828** | Solid detection and localization across thousands of test scenarios. |
+| **mAP50-95** | **0.680** | Consistent bounding box accuracy, even with overlapping packages. |
+| **Precision** | **0.877** | Extremely low false-alarm rate, essential for automated billing/audit. |
+| **Recall** | **0.749** | Strong detection coverage in high-density storage environments. |
+
+These metrics reflect the performance of the **ONNX INT8 quantized model**. 
+
 ### Infrastructure as Code (IaC): Terraform
 The entire AWS environment is managed through **Terraform**, moving away from manual configuration toward a professional, reproducible setup.
 * **Automated Provisioning**: Manages the lifecycle of AWS ECS (Fargate), ECR repositories, and all required IAM roles and security groups.
@@ -69,7 +82,7 @@ To avoid the fixed costs associated with an AWS Application Load Balancer, I imp
 
 ## Tech Stack
 
-* **AI & Machine Learning**: Ultralytics YOLOv8n, ONNX Runtime (INT8 Quantization)
+* **AI & Machine Learning**: PyTorch, Ultralytics YOLOv8n, ONNX Runtime (INT8 Quantization)
 * **Backend**: FastAPI (Python 3.11), Boto3 (AWS SDK)
 * **Infrastructure as Code**: Terraform
 * **Cloud Services (AWS)**: ECS Fargate (Serverless), ECR (Container Registry), IAM
@@ -86,6 +99,10 @@ While the current iteration focuses on a lean, cost-effective MVP, the following
 * **Data Persistence**: Integrating **AWS DynamoDB** (NoSQL) to replace the in-memory activity log. This would enable long-term historical analysis, identifying stock trends and consumption patterns over months or years.
 * **User Authentication**: Implementing **AWS Cognito** or OAuth2 to secure dashboard access and manage granular user roles (e.g., Admin vs. Viewer).
 * **CI/CD Automation**: Setting up **GitHub Actions** workflows to automatically run tests, build the Docker image, and apply Terraform changes upon pushing to the main branch.
+
+
+
+
 
 
 
