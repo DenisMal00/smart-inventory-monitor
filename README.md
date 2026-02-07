@@ -132,7 +132,6 @@ python simulate.py
 ```
 
 4. Monitor the Results
-Open the **[Live Dashboard](http://inventory-monitor-denis.duckdns.org:8000/)** in your browser. As the script sends each frame, you will see:
-* **Real-time Counter**: The total item count updating dynamically based on the AI's predictions.
-* **Telemetry Charts**: Live graphs reflecting the latest data ingestion and processing results.
+Open the **[Live Dashboard](http://inventory-monitor-denis.duckdns.org:8000/)** in your browser. As the script sends each frame, you will see the dashboard that changes
+
 
