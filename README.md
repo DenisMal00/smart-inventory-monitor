@@ -1,3 +1,4 @@
+![Python CI](https://github.com/DenisMal00/rossmann-sales-engine/actions/workflows/ci.yml/badge.svg)
 # 📦 Smart Inventory Monitor
 ### Real-time AI-driven stock analysis
 
@@ -134,6 +135,7 @@ python simulate.py
 
 4. Monitor the Results
 Open the **[Live Dashboard](http://inventory-monitor-denis.duckdns.org:8000/)** in your browser. As the script sends each frame, you will see the dashboard that changes
+
 
 
 
